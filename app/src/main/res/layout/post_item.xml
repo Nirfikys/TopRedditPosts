@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <import type="com.example.topredditposts.ui.core.UIUtilKt" />
+
+        <variable
+            name="post"
+            type="com.example.topredditposts.domain.PostEntity" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/post_thumbnail"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:visibility="@{post.imageUrl == null ? View.GONE : View.VISIBLE}"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/post_author_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:singleLine="true"
+            android:text="@{post.author}"
+            app:layout_constraintLeft_toRightOf="@id/post_thumbnail"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="author" />
+
+        <TextView
+            android:id="@+id/post_comments_num"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:text="@{@string/comments + post.numComments}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/post_thumbnail"
+            tools:text="comments: 9999" />
+
+        <TextView
+            android:id="@+id/post_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:text="@{UIUtilKt.formatDate(post.date, context)}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            tools:text="4 hours ago" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
