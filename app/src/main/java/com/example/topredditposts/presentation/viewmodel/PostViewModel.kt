@@ -11,16 +11,29 @@ class PostViewModel : BaseViewModel() {
 
     init {
         App.appComponent.inject(this)
+        getTopPosts()
     }
 
     @Inject
     lateinit var postRepository: PostRepository
 
     val postsData = MutableLiveData<List<PostEntity>>()
+    val currentPage = MutableLiveData<Int>()
 
-    fun getTopPosts(count: Int, limit: Int) {
+    var showPostOnPage = 25
+    var page = 1
+        set(value) {
+            field = value
+            currentPage.value = value
+            getTopPosts()
+        }
+
+    private fun getTopPosts() {
         RX(
-            { postRepository.getTopPosts() },
+            {
+                val afterId = postsData.value?.lastOrNull()?.id
+                postRepository.getTopPosts(afterId, showPostOnPage)
+            },
             { handleValidResult(postsData, it) },
             { handleFailure(it) }
         )

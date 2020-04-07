@@ -36,10 +36,14 @@ class PostsFragment : BaseFragment() {
 
     override fun setupView(view: View) {
         super.setupView(view)
+        binding.currentPage = postModel.page
+        binding.isNextPageExists = true
         binding.topPostRecycler.adapter = adapter
         binding.topPostRecycler.layoutManager = LinearLayoutManager(context)
+        binding.pageIndicatorNext.setOnClickListener { postModel.page = postModel.page + 1 }
 
         observe(postModel.postsData) { adapter.changeAdapterData(it) }
-        postModel.getTopPosts(0, 25)
+        observe(postModel.currentPage) {binding.currentPage = it;binding.invalidateAll()}
+
     }
 }
