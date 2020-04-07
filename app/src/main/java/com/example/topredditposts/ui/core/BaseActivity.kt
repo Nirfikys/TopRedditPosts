@@ -23,7 +23,8 @@ abstract class BaseActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setupContent()
         if (showToolbar) supportActionBar?.show() else supportActionBar?.hide()
-        replaceFragment(fragment = currentFragment)
+        if (supportFragmentManager.fragments.isEmpty())
+            replaceFragment(fragment = currentFragment)
     }
 
     open fun setupContent() {
@@ -93,7 +94,7 @@ abstract class BaseActivity : AppCompatActivity() {
         }
     }
 
-    fun showMessage(text:String){
+    fun showMessage(text: String) {
         Toast.makeText(this, text, Toast.LENGTH_LONG).show()
     }
 

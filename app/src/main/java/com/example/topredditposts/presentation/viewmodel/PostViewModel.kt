@@ -23,6 +23,7 @@ class PostViewModel : BaseViewModel() {
     var showPostOnPage = 25
     var page = 1
         set(value) {
+            if (field == value) return
             field = value
             currentPage.value = value
             getTopPosts()

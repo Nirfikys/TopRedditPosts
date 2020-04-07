@@ -13,14 +13,26 @@ import com.example.topredditposts.ui.core.BaseFragment
 import com.example.topredditposts.ui.core.observe
 
 class PostsFragment : BaseFragment() {
+
+    companion object{
+        const val PAGE_KEY = "page"
+    }
+
     override val layoutId: Int = R.layout.post_list_layout
     private val adapter = PostsAdapter()
     private lateinit var binding: PostListLayoutBinding
     private lateinit var postModel: PostViewModel
+    private var page = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         postModel = ViewModelProvider(this).get(PostViewModel::class.java)
+        if (savedInstanceState != null && savedInstanceState.containsKey(PAGE_KEY)){
+            page = savedInstanceState.getInt(PAGE_KEY, 1)
+            if (page != postModel.page) postModel.page = page
+        }else{
+            page = postModel.page
+        }
     }
 
     override fun onCreateView(
@@ -36,14 +48,24 @@ class PostsFragment : BaseFragment() {
 
     override fun setupView(view: View) {
         super.setupView(view)
-        binding.currentPage = postModel.page
+        binding.currentPage = page
         binding.isNextPageExists = true
         binding.topPostRecycler.adapter = adapter
         binding.topPostRecycler.layoutManager = LinearLayoutManager(context)
-        binding.pageIndicatorNext.setOnClickListener { postModel.page = postModel.page + 1 }
+        binding.pageIndicatorNext.setOnClickListener { changePage(postModel.page + 1) }
 
         observe(postModel.postsData) { adapter.changeAdapterData(it) }
-        observe(postModel.currentPage) {binding.currentPage = it;binding.invalidateAll()}
+        observe(postModel.currentPage) { binding.currentPage = it;binding.invalidateAll() }
 
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt(PAGE_KEY, page)
+    }
+
+    private fun changePage(newPage: Int) {
+        page = newPage
+        postModel.page = page
     }
 }
