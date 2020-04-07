@@ -1,23 +1,27 @@
 package com.example.topredditposts.ui.main
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.topredditposts.R
 import com.example.topredditposts.databinding.PostListLayoutBinding
-import com.example.topredditposts.databinding.PostListLayoutBindingImpl
-import com.example.topredditposts.domain.PostRemoteRepositoryImpl
-import com.example.topredditposts.remote.core.Request
+import com.example.topredditposts.presentation.viewmodel.PostViewModel
 import com.example.topredditposts.ui.core.BaseFragment
+import com.example.topredditposts.ui.core.observe
 
 class PostsFragment : BaseFragment() {
     override val layoutId: Int = R.layout.post_list_layout
     private val adapter = PostsAdapter()
     private lateinit var binding: PostListLayoutBinding
+    private lateinit var postModel: PostViewModel
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        postModel = ViewModelProvider(this).get(PostViewModel::class.java)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,9 +38,8 @@ class PostsFragment : BaseFragment() {
         super.setupView(view)
         binding.topPostRecycler.adapter = adapter
         binding.topPostRecycler.layoutManager = LinearLayoutManager(context)
-        Thread {
-            val newItems = PostRemoteRepositoryImpl(Request()).getTopPosts()
-            Handler(Looper.getMainLooper()).post { adapter.changeAdapterData(newItems) }
-        }.start()
+
+        observe(postModel.postsData) { adapter.changeAdapterData(it) }
+        postModel.getTopPosts(0, 25)
     }
 }
