@@ -12,6 +12,17 @@ class Request {
 
         const val USER_AGENT =
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36 OPR/67.0.3575.115"
+
+        @JvmStatic
+        fun <R> getBinary(url:String, transform: (InputStream) -> R): R{
+            val urlConnection: HttpURLConnection = URL(url).openConnection() as HttpURLConnection
+            urlConnection.setRequestProperty("user-agent", USER_AGENT)
+            try {
+                return transform(urlConnection.inputStream)
+            } finally {
+                urlConnection.disconnect()
+            }
+        }
     }
 
     fun <R> make(uri: String, transform: (Reader) -> R): R {
@@ -24,4 +35,5 @@ class Request {
             urlConnection.disconnect()
         }
     }
+
 }

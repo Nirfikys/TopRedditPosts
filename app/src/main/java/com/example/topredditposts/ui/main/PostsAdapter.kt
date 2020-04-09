@@ -26,11 +26,13 @@ class PostsAdapter : BaseAdapter<PostsAdapter.PostViewHolder, PostEntity>() {
         BaseAdapter.BaseViewHolder<PostEntity>(binding.root) {
         override fun onBind(item: PostEntity) {
             binding.post = item
-            val spanCount = if (item.imagesUrl.size >= 3) 3 else item.imagesUrl.size
-            binding.postImageList.layoutManager = GridLayoutManager(binding.root.context, spanCount)
-            val postImageAdapter = PostImageAdapter()
-            binding.postImageList.adapter = postImageAdapter
-            postImageAdapter.changeAdapterData(item.imagesUrl)
+            if (item.imagesUrl.isNotEmpty()){
+                val spanCount = if (item.imagesUrl.size >= 3) 3 else item.imagesUrl.size
+                binding.postImageList.layoutManager = GridLayoutManager(binding.root.context, spanCount)
+                val postImageAdapter = PostImageAdapter()
+                binding.postImageList.adapter = postImageAdapter
+                postImageAdapter.changeAdapterData(item.imagesUrl)
+            }
         }
     }
 
