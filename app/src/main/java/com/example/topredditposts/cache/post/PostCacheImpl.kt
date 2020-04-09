@@ -13,7 +13,7 @@ class PostCacheImpl(private val dbHelper: DBHelper) : PostCache {
             cv.put(DBHelper.POST_ID, it.id)
             cv.put(DBHelper.POST_AUTHOR, it.author)
             cv.put(DBHelper.POST_COMMENTS, it.numComments)
-            cv.put(DBHelper.POST_THUMBNAIL, it.imageUrl)
+            cv.put(DBHelper.POST_THUMBNAIL, it.thumbnail)
             cv.put(DBHelper.POST_SCORE, it.score)
             cv.put(DBHelper.POST_DATE, it.date.time)
             db.insert(DBHelper.POSTS_TABLE_NAME, null, cv)

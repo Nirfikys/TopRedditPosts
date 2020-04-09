@@ -169,7 +169,7 @@ data class DataX(
     @SerializedName("post_hint")
     val postHint: String,
     @SerializedName("preview")
-    val preview: Preview,
+    val preview: Preview?,
     @SerializedName("pwls")
     val pwls: Int,
     @SerializedName("quarantine")
@@ -340,7 +340,7 @@ data class Preview(
     @SerializedName("enabled")
     val enabled: Boolean,
     @SerializedName("images")
-    val images: List<Image>
+    val images: List<Image>?
 )
 
 data class Image(

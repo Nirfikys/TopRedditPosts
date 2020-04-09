@@ -10,6 +10,7 @@ fun DataX.toEntity(): PostEntity {
         thumbnail,
         numComments,
         score,
+        preview?.images?.map { it.source.url }.orEmpty(),
         Date(created)
     )
 }

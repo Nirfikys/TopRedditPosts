@@ -15,13 +15,14 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:padding="10dp">
 
         <ImageView
             android:id="@+id/post_thumbnail"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:visibility="@{post.imageUrl == null ? View.GONE : View.VISIBLE}"
+            android:visibility="@{post.thumbnail == null ? View.GONE : View.VISIBLE}"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -35,6 +36,18 @@
             app:layout_constraintLeft_toRightOf="@id/post_thumbnail"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="author" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/post_image_list"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:maxHeight="300dp"
+            android:padding="10dp"
+            android:visibility="@{post.imagesUrl.size() == 0 ? View.GONE : View.VISIBLE}"
+            app:layout_constraintBottom_toTopOf="@id/post_comments_num"
+            app:layout_constraintLeft_toRightOf="@id/post_thumbnail"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/post_author_name" />
 
         <TextView
             android:id="@+id/post_comments_num"
