@@ -9,12 +9,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.topredditposts.R
 import com.example.topredditposts.databinding.PostListLayoutBinding
 import com.example.topredditposts.presentation.viewmodel.PostViewModel
+import com.example.topredditposts.ui.core.BaseAdapter
 import com.example.topredditposts.ui.core.BaseFragment
 import com.example.topredditposts.ui.core.observe
 
 class PostsFragment : BaseFragment() {
 
-    companion object{
+    companion object {
         const val PAGE_KEY = "page"
     }
 
@@ -27,10 +28,10 @@ class PostsFragment : BaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         postModel = ViewModelProvider(this).get(PostViewModel::class.java)
-        if (savedInstanceState != null && savedInstanceState.containsKey(PAGE_KEY)){
+        if (savedInstanceState != null && savedInstanceState.containsKey(PAGE_KEY)) {
             page = savedInstanceState.getInt(PAGE_KEY, 1)
             if (page != postModel.page) postModel.page = page
-        }else{
+        } else {
             page = postModel.page
         }
     }
@@ -51,8 +52,20 @@ class PostsFragment : BaseFragment() {
         binding.currentPage = page
         binding.isNextPageExists = true
         binding.topPostRecycler.adapter = adapter
+        adapter.imageOnClick = object : BaseAdapter.OnClick<String>{
+            override fun onClick(item: String?, view: View) {
+                base {
+                    if (item != null)
+                        addFragment(fragment = ImageFragment(item))
+                }
+            }
+
+            override fun onLongClick(item: String?, view: View) { }
+
+        }
         binding.topPostRecycler.layoutManager = LinearLayoutManager(context)
         binding.pageIndicatorNext.setOnClickListener { changePage(postModel.page + 1) }
+
 
         observe(postModel.postsData) { adapter.changeAdapterData(it) }
         observe(postModel.currentPage) { binding.currentPage = it;binding.invalidateAll() }

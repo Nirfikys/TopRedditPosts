@@ -15,7 +15,8 @@ class Request {
 
         @JvmStatic
         fun <R> getBinary(url:String, transform: (InputStream) -> R): R{
-            val urlConnection: HttpURLConnection = URL(url).openConnection() as HttpURLConnection
+            val encodedUrl = url.replace("amp;s", "s")
+            val urlConnection: HttpURLConnection = URL(encodedUrl).openConnection() as HttpURLConnection
             urlConnection.setRequestProperty("user-agent", USER_AGENT)
             try {
                 return transform(urlConnection.inputStream)
