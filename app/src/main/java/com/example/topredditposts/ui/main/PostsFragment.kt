@@ -65,6 +65,7 @@ class PostsFragment : BaseFragment() {
         }
         binding.topPostRecycler.layoutManager = LinearLayoutManager(context)
         binding.pageIndicatorNext.setOnClickListener { changePage(postModel.page + 1) }
+        binding.pageIndicatorPrev.setOnClickListener { changePage(postModel.page - 1) }
 
 
         observe(postModel.postsData) { adapter.changeAdapterData(it) }

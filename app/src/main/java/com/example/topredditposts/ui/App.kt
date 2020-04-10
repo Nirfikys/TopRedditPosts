@@ -2,6 +2,7 @@ package com.example.topredditposts.ui
 
 import android.app.Application
 import com.example.topredditposts.presentation.modules.AppModule
+import com.example.topredditposts.presentation.modules.CacheModule
 import com.example.topredditposts.presentation.modules.RemoteModule
 import com.example.topredditposts.presentation.viewmodel.PostViewModel
 import com.example.topredditposts.ui.main.PostsFragment
@@ -16,12 +17,12 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        appComponent = DaggerAppComponent.builder().build()
+        appComponent = DaggerAppComponent.builder().appModule(AppModule(this)).build()
     }
 }
 
 @Singleton
-@Component(modules = [RemoteModule::class, AppModule::class])
+@Component(modules = [RemoteModule::class, AppModule::class, CacheModule::class])
 interface AppComponent {
 
     //fragments
