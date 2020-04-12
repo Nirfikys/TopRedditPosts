@@ -6,11 +6,15 @@ import java.lang.Exception
 
 class PostRepositoryImpl(private val remote: PostRemote, private val cache: PostCache) :
     PostRepository {
-    override fun getTopPosts(afterId: String?, limit: Int): List<PostEntity> {
-        val cacheTopPosts = cache.getTopPosts(afterId)
+    override fun getTopPosts(afterId: String?, beforeId: String?, limit: Int): List<PostEntity> {
+        val cacheTopPosts = when {
+            afterId != null -> cache.getTopPosts(afterId = afterId)
+            beforeId != null -> cache.getTopPosts(beforeId = beforeId)
+            else -> emptyList()
+        }
         if (cacheTopPosts.isNotEmpty())
             return cacheTopPosts
-        val remoteTopPosts = remote.getTopPosts(afterId, limit)
+        val remoteTopPosts = remote.getTopPosts(afterId, beforeId, limit)
         try {
             cache.saveTopPosts(remoteTopPosts)
         } catch (ignore: Exception) {

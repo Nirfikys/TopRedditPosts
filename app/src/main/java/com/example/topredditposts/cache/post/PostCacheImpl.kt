@@ -5,6 +5,8 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import com.example.topredditposts.cache.DBHelper
 import com.example.topredditposts.domain.PostEntity
+import com.example.topredditposts.domain.toEntity
+import java.lang.Exception
 import java.util.*
 
 class PostCacheImpl(private val dbHelper: DBHelper) : PostCache {
@@ -19,6 +21,7 @@ class PostCacheImpl(private val dbHelper: DBHelper) : PostCache {
             cv.put(DBHelper.POST_THUMBNAIL, it.thumbnail)
             cv.put(DBHelper.POST_SCORE, it.score)
             cv.put(DBHelper.POST_DATE, it.date.time)
+            cv.put(DBHelper.POST_ADD_DATE, System.currentTimeMillis())
 
             it.imagesUrl.forEach { url ->
                 val imageCv = ContentValues()
@@ -32,35 +35,52 @@ class PostCacheImpl(private val dbHelper: DBHelper) : PostCache {
         db.close()
     }
 
-    override fun getTopPosts(afterId: String?, limit: Int): List<PostEntity> {
+    override fun getTopPosts(afterId: String?, beforeId: String?, limit: Int): List<PostEntity> {
         val result = emptyList<PostEntity>().toMutableList()
         val db = dbHelper.readableDatabase
-        if (afterId == null) return getAllPosts(db)
-        val afterPost = getPostById(db, afterId)
-        if (afterPost != null) {
+        if (afterId == null && beforeId == null) return getAllPosts(db, limit)
+        val post: PostCacheEntity?
+        val selection: String
+        val orderBy: String
+        when {
+            afterId != null -> {
+                post = getPostById(db, afterId)
+                selection = "${DBHelper.POST_ADD_DATE} > ?"
+                orderBy = DBHelper.POST_ADD_DATE
+            }
+            beforeId != null -> {
+                post = getPostById(db, beforeId)
+                selection = "${DBHelper.POST_ADD_DATE} < ?"
+                orderBy = "${DBHelper.POST_ADD_DATE} DESC"
+            }
+            else -> {
+                throw Exception("unreachable")
+            }
+        }
+        if (post != null) {
             db.query(
                 DBHelper.POSTS_TABLE_NAME,
                 null,
-                "${DBHelper.POST_SCORE} < ?",
-                arrayOf(afterPost.score.toString()),
+                selection,
+                arrayOf(post.addDate.toString()),
                 null,
                 null,
-                DBHelper.POST_SCORE,
+                orderBy,
                 limit.toString()
             ).use {
                 if (it.count >= limit && it.moveToFirst()) {
                     do {
                         val id = it.getString(it.getColumnIndex(DBHelper.POST_ID))
-                        result += makePostEntity(it, getImagesByPostId(db, id))
-                    }while (it.moveToNext())
+                        result += makePostEntity(it, getImagesByPostId(db, id)).toEntity()
+                    } while (it.moveToNext())
                 }
             }
         }
         db.close()
-        return result.reversed()
+        return if(afterId != null) result else result.reversed()
     }
 
-    private fun getAllPosts(db:SQLiteDatabase):List<PostEntity>{
+    private fun getAllPosts(db: SQLiteDatabase, limit: Int): List<PostEntity> {
         val result = emptyList<PostEntity>().toMutableList()
         db.query(
             DBHelper.POSTS_TABLE_NAME,
@@ -69,18 +89,19 @@ class PostCacheImpl(private val dbHelper: DBHelper) : PostCache {
             null,
             null,
             null,
-            null
+            null,
+            limit.toString()
         ).use {
             if (it.moveToFirst())
                 do {
                     val id = it.getString(it.getColumnIndex(DBHelper.POST_ID))
-                    result += makePostEntity(it, getImagesByPostId(db, id))
-                }while (it.moveToNext())
+                    result += makePostEntity(it, getImagesByPostId(db, id)).toEntity()
+                } while (it.moveToNext())
         }
         return result
     }
 
-    private fun getPostById(db: SQLiteDatabase, postId: String): PostEntity? {
+    private fun getPostById(db: SQLiteDatabase, postId: String): PostCacheEntity? {
         return db.query(
             DBHelper.POSTS_TABLE_NAME,
             null,
@@ -97,15 +118,17 @@ class PostCacheImpl(private val dbHelper: DBHelper) : PostCache {
         }
     }
 
-    private fun makePostEntity(cursor: Cursor, images: List<String>): PostEntity {
-        return PostEntity(
+    private fun makePostEntity(cursor: Cursor, images: List<String>): PostCacheEntity {
+        return PostCacheEntity(
             cursor.getString(cursor.getColumnIndex(DBHelper.POST_ID)),
             cursor.getString(cursor.getColumnIndex(DBHelper.POST_AUTHOR)),
-            cursor.getString(cursor.getColumnIndex(DBHelper.POST_AUTHOR)),
+            cursor.getString(cursor.getColumnIndex(DBHelper.POST_THUMBNAIL)),
             cursor.getInt(cursor.getColumnIndex(DBHelper.POST_COMMENTS)),
             cursor.getInt(cursor.getColumnIndex(DBHelper.POST_SCORE)),
             images,
-            Date(cursor.getLong(cursor.getColumnIndex(DBHelper.POST_DATE))))
+            cursor.getLong(cursor.getColumnIndex(DBHelper.POST_DATE)),
+            cursor.getLong(cursor.getColumnIndex(DBHelper.POST_ADD_DATE))
+        )
     }
 
     private fun getImagesByPostId(db: SQLiteDatabase, postId: String): List<String> {

@@ -1,13 +1,14 @@
-package com.example.topredditposts.domain
+package com.example.topredditposts.cache.post
 
 import java.util.*
 
-data  class PostEntity(
+data  class PostCacheEntity(
     val id: String,
     val author: String,
     val thumbnail: String?,
     val numComments: Int,
     val score: Int,
     val imagesUrl: List<String>,
-    val date: Date
+    val date: Long,
+    val addDate: Long
 )

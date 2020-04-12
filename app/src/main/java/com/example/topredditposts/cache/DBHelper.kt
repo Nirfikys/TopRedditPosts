@@ -19,6 +19,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, "TopRedditPosts", n
         const val POST_COMMENTS = "comments"
         const val POST_SCORE = "score"
         const val POST_DATE = "date"
+        const val POST_ADD_DATE = "post_add_date"
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
@@ -29,7 +30,8 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, "TopRedditPosts", n
                     + "$POST_THUMBNAIL text,"
                     + "$POST_COMMENTS integer,"
                     + "$POST_SCORE integer,"
-                    + "$POST_DATE integer"
+                    + "$POST_DATE integer,"
+                    + "$POST_ADD_DATE integer"
                     + ");"
         )
 

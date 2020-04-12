@@ -52,7 +52,7 @@ class PostsFragment : BaseFragment() {
         binding.currentPage = page
         binding.isNextPageExists = true
         binding.topPostRecycler.adapter = adapter
-        adapter.imageOnClick = object : BaseAdapter.OnClick<String>{
+        adapter.imageOnClick = object : BaseAdapter.OnClick<String> {
             override fun onClick(item: String?, view: View) {
                 base {
                     if (item != null)
@@ -60,7 +60,7 @@ class PostsFragment : BaseFragment() {
                 }
             }
 
-            override fun onLongClick(item: String?, view: View) { }
+            override fun onLongClick(item: String?, view: View) {}
 
         }
         binding.topPostRecycler.layoutManager = LinearLayoutManager(context)
@@ -68,8 +68,14 @@ class PostsFragment : BaseFragment() {
         binding.pageIndicatorPrev.setOnClickListener { changePage(postModel.page - 1) }
 
 
-        observe(postModel.postsData) { adapter.changeAdapterData(it) }
-        observe(postModel.currentPage) { binding.currentPage = it;binding.invalidateAll() }
+        observe(postModel.postsData) {
+            adapter.changeAdapterData(it)
+            (binding.topPostRecycler.layoutManager as LinearLayoutManager).scrollToPosition(0)
+        }
+        observe(postModel.currentPage) {
+            binding.currentPage = it
+            binding.invalidateAll()
+        }
 
     }
 

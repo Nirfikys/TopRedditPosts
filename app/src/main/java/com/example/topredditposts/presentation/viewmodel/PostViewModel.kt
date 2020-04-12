@@ -11,7 +11,7 @@ class PostViewModel : BaseViewModel() {
 
     init {
         App.appComponent.inject(this)
-        getTopPosts()
+        getNextPage()
     }
 
     @Inject
@@ -24,16 +24,30 @@ class PostViewModel : BaseViewModel() {
     var page = 1
         set(value) {
             if (field == value) return
-            field = value
             currentPage.value = value
-            getTopPosts()
+            if (value > field)
+                getNextPage()
+            else
+                getPrevPage()
+            field = value
         }
 
-    private fun getTopPosts() {
+    private fun getNextPage() {
         RX(
             {
                 val afterId = postsData.value?.lastOrNull()?.id
-                postRepository.getTopPosts(afterId, showPostOnPage)
+                postRepository.getTopPosts(afterId = afterId, limit = showPostOnPage)
+            },
+            { handleValidResult(postsData, it) },
+            { handleFailure(it) }
+        )
+    }
+
+    private fun getPrevPage() {
+        RX(
+            {
+                val beforeId = postsData.value?.firstOrNull()?.id
+                postRepository.getTopPosts(beforeId = beforeId, limit = showPostOnPage)
             },
             { handleValidResult(postsData, it) },
             { handleFailure(it) }
