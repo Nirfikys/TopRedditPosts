@@ -8,6 +8,6 @@ data  class PostEntity(
     val thumbnail: String?,
     val numComments: Int,
     val score: Int,
-    val imagesUrl: List<String>,
+    val images: List<ImageEntity>,
     val date: Date
 )

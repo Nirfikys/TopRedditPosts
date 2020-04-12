@@ -1,7 +1,6 @@
 package com.example.topredditposts.ui.main
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.topredditposts.databinding.PostItemBinding
@@ -29,13 +28,13 @@ class PostsAdapter : BaseAdapter<PostsAdapter.PostViewHolder, PostEntity>() {
         BaseAdapter.BaseViewHolder<PostEntity>(binding.root) {
         override fun onBind(item: PostEntity) {
             binding.post = item
-            if (item.imagesUrl.isNotEmpty()){
-                val spanCount = if (item.imagesUrl.size >= 3) 3 else item.imagesUrl.size
+            if (item.images.isNotEmpty()){
+                val spanCount = if (item.images.size >= 3) 3 else item.images.size
                 binding.postImageList.layoutManager = GridLayoutManager(binding.root.context, spanCount)
                 val postImageAdapter = PostImageAdapter()
                 postImageAdapter.onClick = imageOnClick
                 binding.postImageList.adapter = postImageAdapter
-                postImageAdapter.changeAdapterData(item.imagesUrl)
+                postImageAdapter.changeAdapterData(item.images.map { it.url })
             }
         }
     }

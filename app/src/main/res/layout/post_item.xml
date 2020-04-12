@@ -44,7 +44,7 @@
             android:layout_height="wrap_content"
             android:maxHeight="300dp"
             android:padding="10dp"
-            android:visibility="@{post.imagesUrl.size() == 0 ? View.GONE : View.VISIBLE}"
+            android:visibility="@{post.images.size() == 0 ? View.GONE : View.VISIBLE}"
             app:layout_constraintBottom_toTopOf="@id/post_comments_num"
             app:layout_constraintLeft_toRightOf="@id/post_thumbnail"
             app:layout_constraintRight_toRightOf="parent"

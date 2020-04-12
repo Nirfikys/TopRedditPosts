@@ -1,6 +1,6 @@
 package com.example.topredditposts.cache.post
 
-import java.util.*
+import com.example.topredditposts.domain.ImageEntity
 
 data  class PostCacheEntity(
     val id: String,
@@ -8,7 +8,7 @@ data  class PostCacheEntity(
     val thumbnail: String?,
     val numComments: Int,
     val score: Int,
-    val imagesUrl: List<String>,
+    val imagesUrl: List<ImageEntity>,
     val date: Long,
     val addDate: Long
 )

@@ -37,7 +37,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, "TopRedditPosts", n
 
         db?.execSQL(
             "create table $IMAGE_TABLE_NAME ("
-                    + "$IMAGE_ID integer primary key autoincrement,"
+                    + "$IMAGE_ID text primary key,"
                     + "$IMAGE_URL text,"
                     + "$IMAGE_POST_ID text"
                     + ");"
