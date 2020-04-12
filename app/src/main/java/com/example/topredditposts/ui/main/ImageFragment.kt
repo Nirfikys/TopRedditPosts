@@ -15,6 +15,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.drawToBitmap
+import com.example.topredditposts.R
 import com.example.topredditposts.databinding.ImageLayoutBinding
 import com.example.topredditposts.ui.core.BaseActivity
 import com.example.topredditposts.ui.core.BaseFragment
@@ -105,6 +106,7 @@ class ImageFragment(private val image: String) : BaseFragment() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
                 contentValues.put(MediaStore.MediaColumns.IS_PENDING, 0)
         }
+        Toast.makeText(context, context?.getText(R.string.saved), Toast.LENGTH_LONG).show()
     }
 
     override fun onRequestPermissionsResult(
