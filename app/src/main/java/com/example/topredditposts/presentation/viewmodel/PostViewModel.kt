@@ -33,6 +33,7 @@ class PostViewModel : BaseViewModel() {
         }
 
     private fun getNextPage() {
+        updateProgress(true)
         RX(
             {
                 val afterId = postsData.value?.lastOrNull()?.id
@@ -44,6 +45,7 @@ class PostViewModel : BaseViewModel() {
     }
 
     private fun getPrevPage() {
+        updateProgress(true)
         RX(
             {
                 val beforeId = postsData.value?.firstOrNull()?.id

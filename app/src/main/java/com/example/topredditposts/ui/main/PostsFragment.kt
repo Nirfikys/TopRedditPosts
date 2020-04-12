@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.topredditposts.R
@@ -50,6 +51,7 @@ class PostsFragment : BaseFragment() {
     override fun setupView(view: View) {
         super.setupView(view)
         binding.currentPage = page
+        binding.progress = false
         binding.isNextPageExists = true
         binding.topPostRecycler.adapter = adapter
         adapter.imageOnClick = object : BaseAdapter.OnClick<String> {
@@ -75,6 +77,16 @@ class PostsFragment : BaseFragment() {
         observe(postModel.currentPage) {
             binding.currentPage = it
             binding.invalidateAll()
+        }
+        observe(postModel.progressData) {
+            binding.progress = it
+        }
+        observe(postModel.failureData) {
+            val exception = it.getContentIfNotHandled()
+            if (exception != null) {
+                binding.progress = false
+                Toast.makeText(context, exception.message, Toast.LENGTH_LONG).show()
+            }
         }
 
     }
