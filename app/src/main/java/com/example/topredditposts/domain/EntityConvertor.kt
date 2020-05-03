@@ -12,7 +12,7 @@ fun DataX.toEntity(): PostEntity {
         numComments,
         score,
         preview?.images?.map { ImageEntity(it.id, it.source.url) }.orEmpty(),
-        Date(created)
+        Date(created * 1000)
     )
 }
 
